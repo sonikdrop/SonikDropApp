@@ -199,7 +199,7 @@ export function ApprovePoapComponent() {
                         <p>{index + 1}.</p>
                         <div className="flex flex-col gap-2">
                           <p className="text-white truncate">
-                            Address: {recepients.address}
+                            {recepients.address}
                           </p>
                           {/* <p className="text-white">
                             Amount: {recepients.amount}

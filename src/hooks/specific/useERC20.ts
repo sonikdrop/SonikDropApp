@@ -126,7 +126,41 @@ export const useTokenDetail = (tokenAddress: string) => {
     }
   }, [readOnlyERC20Contract, tokenAddress, chainId, dispatch]);
 
-  return { isLoadingDetails, fetchDetails, errorTxt };
+  const fetchDetailsWithoutRedux = useCallback(async () => {
+    if (!readOnlyERC20Contract) {
+      console.log("ERC20 contract found");
+      return null;
+    }
+    if (!chainId) {
+      console.log("Invalid chain");
+      return null;
+    }
+    if (!tokenAddress) {
+      console.log("Invalid Token Address");
+      return null;
+    }
+    try {
+      setisLoadingDetails(true);
+      console.log("fetching details2...");
+      const name = await readOnlyERC20Contract.name();
+      const decimals = await readOnlyERC20Contract.decimals();
+      const symbol = await readOnlyERC20Contract.symbol();
+
+      console.log({ name, decimals, symbol });
+      console.log("Done fetching details2...");
+      const metadata = { name, decimals: Number(decimals), symbol };
+      return metadata;
+    } catch (error) {
+      setErrorTxt("Invalid Token");
+      console.log("Invalid Token");
+      console.log(error);
+      return null;
+    } finally {
+      setisLoadingDetails(false);
+    }
+  }, [readOnlyERC20Contract, tokenAddress, chainId, dispatch]);
+
+  return { isLoadingDetails, fetchDetails, errorTxt, fetchDetailsWithoutRedux };
 };
 
 // Work on this nextUp

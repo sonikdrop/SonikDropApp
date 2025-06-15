@@ -44,7 +44,7 @@ export function generateMerkleTree(entities: AirdropEntity[]) {
   return { rootHash, proofs, output };
 }
 
-export function generateMerkleTreeFromAddresses(entities: AirdropEntity[]) {
+export function generateMerkleTreeFromAddresses(entities: {address : string}[]) {
   const addresses = entities.map((entity) => entity.address);
   // Convert addresses to OpenZeppelin-compatible entries: [ [address], [address], ... ]
   const values = addresses.map((addr) => [addr]);

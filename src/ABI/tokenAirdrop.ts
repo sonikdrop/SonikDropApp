@@ -24,7 +24,8 @@ export const TOKEN_AIRDROP_ABI = [
    uint256 _endtime,
    bool _hasOwnerWithdrawn,
    bool _hasUserClaimedAirdrop,
-   address _nftAddress
+   address _nftAddress,
+   address _tokenAddress
  )`,
 
   // Write/public/external functions

@@ -11,4 +11,5 @@ export interface ITokenDrop {
   hasOwnerWithdrawn: boolean;
   hasUserClaimedAirdrop: boolean;
   nftAddress: string;
+  tokenContractAddress : string;
 }

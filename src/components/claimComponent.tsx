@@ -39,6 +39,7 @@ import { ethers } from "ethers";
 import { useReadTokenFunctions } from "../hooks/specific/token/useReadTokenAirdrop";
 import { useTokenDropFunctions } from "../hooks/specific/token/useTokenAirdrop";
 import { updateAllTokenDropsAfterClaim } from "../store/slices/tokenDropDataSlice";
+import { ITokenDetails, useTokenDetail } from "../hooks/specific/useERC20";
 
 export const DropComp: React.FC<IDropComp> = ({
   name,
@@ -53,6 +54,7 @@ export const DropComp: React.FC<IDropComp> = ({
   contractAddress,
   isEditable,
   hasUserClaimed,
+  tokenContractAddress,
 }) => {
   const [showModal, setShowModal] = useState(false);
   const percentageRaw = (totalRewardClaimed * 100) / totalRewardPool;
@@ -91,6 +93,19 @@ export const DropComp: React.FC<IDropComp> = ({
     setShowModal(true);
   };
 
+  if (!tokenContractAddress) return;
+
+  const { fetchDetailsWithoutRedux, isLoadingDetails } =
+    useTokenDetail(tokenContractAddress);
+  const [tokenDetails, setTokenDetails] = useState<ITokenDetails | null>(null);
+
+  useEffect(() => {
+    const fetchDeet = async () => {
+      const tokenDetails = await fetchDetailsWithoutRedux();
+      setTokenDetails(tokenDetails);
+    };
+    fetchDeet();
+  }, []);
   return (
     <>
       <ThreeDHoverWrapper>
@@ -123,7 +138,17 @@ export const DropComp: React.FC<IDropComp> = ({
             <div className="two flex justify-between gap-[1rem] flex-wrap">
               <div className="">
                 <p className="">Reward Pool</p>
-                <h3>{ethers.formatUnits(totalRewardPool.toString(), 18)}ETH</h3>
+                {isLoadingDetails ? (
+                  <ButtonLoader />
+                ) : (
+                  <h3>
+                    {ethers.formatUnits(
+                      totalRewardPool.toString(),
+                      tokenDetails?.decimals
+                    )}
+                    {tokenDetails?.symbol}
+                  </h3>
+                )}
               </div>
               <div>
                 <p>{endDate ? "ENDING DATE" : "CREATION DATE"}</p>
@@ -168,9 +193,6 @@ export const DropComp: React.FC<IDropComp> = ({
             </div>
           </div>
           <div className="btn">
-            <button onClick={() => setShowModal(true)}>
-              {isEditable ? "View Airdrop" : "Check Eligibility"}
-            </button>
             <button
               onClick={handleCheckEligibiltyOrView}
               disabled={!isEditable && (hasUserClaimed || isChecking)}
@@ -218,6 +240,7 @@ export const DropComp: React.FC<IDropComp> = ({
             closeModal={() => setShowModal(false)}
             gasInfo={gasInfo}
             isEligible={isEligible}
+            tokenDetails={tokenDetails}
           />
         )}
       </AnimatePresence>
@@ -432,6 +455,7 @@ interface IClaimModal extends IDropComp {
   poapImg?: string;
   gasInfo: GasInfo | null;
   isEligible: boolean;
+  tokenDetails?: ITokenDetails | null;
 }
 export const ClaimModal: React.FC<IClaimModal> = ({
   closeModal,
@@ -450,6 +474,7 @@ export const ClaimModal: React.FC<IClaimModal> = ({
   poapImg,
   isEligible,
   gasInfo,
+  tokenDetails,
 }) => {
   // for participants
   const participantPercentageRaw = (totalClaims * 100) / totalParticipants;
@@ -706,6 +731,22 @@ export const ClaimModal: React.FC<IClaimModal> = ({
                 <div className="required flex items-center gap-[0.25rem]">
                   <InfoIcon />
                   <p>NFT is required to claim Airdrop</p>
+                </div>
+              )}
+              {tokenDetails && (
+                <div className="flex items-stretch justify-between gap-[1rem]">
+                  <div className="flex flex-col addy">
+                    <h4>Token Name</h4>
+                    <div className="flex items-center gap-[0.25rem]">
+                      <p className="whitespace-normal">{tokenDetails.name}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col addy">
+                    <h4>Token Symbol</h4>
+                    <div className="flex items-center justify-end gap-[0.25rem]">
+                      <p className="whitespace-normal">{tokenDetails.symbol}</p>
+                    </div>
+                  </div>
                 </div>
               )}
               <div className="flex items-stretch justify-between gap-[1rem]">

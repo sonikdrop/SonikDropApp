@@ -103,8 +103,12 @@ export const useReadTokenFactoryFunctions = () => {
               hasOwnerWithdrawn,
               hasUserClaimedAirdrop,
               nftAddress,
+              tokenContractAddress,
             ] = iface.decodeFunctionResult("getDropInfo", res.returnData);
 
+            const men= iface.decodeFunctionResult("getDropInfo", res.returnData);
+            console.log("men -> ",men);
+            
             return {
               address: dropAddresses[idx],
               name,
@@ -122,9 +126,11 @@ export const useReadTokenFactoryFunctions = () => {
               hasUserClaimedAirdrop,
               nftAddress:
                 ethers.ZeroAddress != nftAddress ? nftAddress : undefined,
+              tokenContractAddress: tokenContractAddress,
             };
           }
         );
+        console.log("decoded result: ", decoded);
         setFn(decoded.filter((drop): drop is ITokenDrop => drop !== null));
       } catch (error) {
         const decodedError = await errorDecoder.decode(error);

@@ -22,8 +22,7 @@ export const useTokenDropFunctions = (tokenDropContractAddress: string) => {
       return { success: false, transactionHash: null, amountClaimed: null };
     }
 
-    // get this merkleproof from the backend server (using the contract address and user address)
-    // get this merkleproof n amount from the backend server
+    //@note get this merkleproof and amount from the backend server (using the contract address and user address)
     const amount = "310000000000000000000";
     const merkleProof = [
       "0x708e7cb9a75ffb24191120fba1c3001faa9078147150c6f2747569edbadee751",

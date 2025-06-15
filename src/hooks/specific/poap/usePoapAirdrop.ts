@@ -18,7 +18,7 @@ export const usePoapDropFunctions = (poapContractAddress: string) => {
       return { success: false, transactionHash: null };
     }
 
-    // get this merkleproof from the backend server (using the contract address and user address)
+    // @note get this merkleproof from the backend server (using the contract address and user address)
     const merkleProof = [
       "0x708e7cb9a75ffb24191120fba1c3001faa9078147150c6f2747569edbadee751",
       "0x8cdd6608c14a222369d97956b504f94500a33c673fd156f8f2da7f980260c91c",

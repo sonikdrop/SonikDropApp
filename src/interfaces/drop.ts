@@ -12,4 +12,5 @@ export interface IDropComp {
   hasUserClaimed ?: boolean;
   baseURI?: string;
   contractAddress: string;
+  tokenContractAddress ?: string;
 }
